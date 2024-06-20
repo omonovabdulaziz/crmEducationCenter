@@ -1,19 +1,15 @@
-version: '3.8'
-
+version: '3'
 services:
   postgres:
-    image: postgres:12.7-alpine
-    container_name: postgres-db
+    container_name: itservice-db
+    image: "postgres:15"
+    restart: always
+    ports:
+      - "5435:5435"
     environment:
-      POSTGRES_DB: crmuchun
+      POSTGRES_DB: itservice
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: omonov2006
-    ports:
-      - "5434:5434"
-    command: ["postgres", "-c", "log_statement=all"]
-    volumes:
-      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
-
   crm-app:
     build:
       context: .
@@ -24,17 +20,9 @@ services:
     depends_on:
       - postgres
     environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/crmuchun
+      SPRING_DATASOURCE_URL: jdbc:postgresql://itservice-db:5432/itservice
       SPRING_DATASOURCE_USERNAME: postgres
       SPRING_DATASOURCE_PASSWORD: omonov2006
-      SPRING_JPA_SHOW_SQL: "true"
-      SPRING_JPA_HIBERNATE_DDL_AUTO: update
-      SPRING_SERVLET_MULTIPART_ENABLED: "true"
-      SPRING_SERVLET_MULTIPART_MAX_FILE_SIZE: 10MB
-      SPRING_SERVLET_MULTIPART_MAX_REQUEST_SIZE: 10MB
-      SPRING_SERVLET_MULTIPART_FILE_SIZE_THRESHOLD: 0
-      SPRING_SQL_INIT_MODE: always
 
 volumes:
   postgres-data:
-
