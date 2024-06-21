@@ -18,8 +18,12 @@ public interface StudentRepository extends JpaRepository<Student, Long> {
     Long countByGroupId(Long groupId);
 
     List<Student> findAllByGroupIdAndGroup_IsGroup(Long group_id, Boolean group_isGroup);
+
     @Modifying
     void deleteAllByGroupIdAndGroup_IsGroup(Long group_id, Boolean group_isGroup);
 
+    List<Student> findAllByIsStudentAndGroup_IsGroupAndIsDeletedAndGroup_IsFinished(Boolean isStudent, Boolean group_isGroup, Boolean isDeleted, Boolean group_isFinished);
 
+    @Query(nativeQuery = true, value = "SELECT exists(SELECT 1 FROM student_group WHERE student_id=:studentId and group_id=:groupId and is_active_here=true)")
+    Boolean checkGroupIdAndStudentId(@Param("groupId") Long groupId, @Param("studentId") Long studentId);
 }

@@ -7,11 +7,10 @@ import org.springframework.http.ResponseEntity;
 public interface StudentService {
     ResponseEntity<ApiResponse> createStudent(StudentCreateDTO studentCreateDTO);
 
-    ResponseEntity<ApiResponse> activeStudent(Long studentId, Long groupId);
+    ResponseEntity<ApiResponse> activeStudent(Long studentId, Long groupId , Boolean activate);
 
     ResponseEntity<ApiResponse> deleteStudent(Long studentId);
 
-    ResponseEntity<ApiResponse> changeGroup(Long studentId, Long groupId);
 
     ResponseEntity<ApiResponse> addStudentGroup(Long studentId, Long newGroupId);
 

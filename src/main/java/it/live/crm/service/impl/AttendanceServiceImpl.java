@@ -11,6 +11,7 @@ import it.live.crm.repository.AttendanceRepository;
 import it.live.crm.repository.GroupRepository;
 import it.live.crm.repository.StudentRepository;
 import it.live.crm.service.AttendanceService;
+import it.live.crm.service.helper.LessonFinanceHelper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -27,6 +28,7 @@ public class AttendanceServiceImpl implements AttendanceService {
     private final AttendanceRepository attendanceRepository;
     private final StudentRepository studentRepository;
     private final GroupRepository groupRepository;
+    private final LessonFinanceHelper lessonFinanceHelper;
 
     @Override
     public ResponseEntity<ApiResponse> create(AttendanceCreateDTO attendance) {
@@ -63,22 +65,8 @@ public class AttendanceServiceImpl implements AttendanceService {
         Group group = groupRepository.findByIdAndIsGroup(groupId, true).orElseThrow(() -> new NotFoundException("group not found or it is not group"));
         List<Days> days = group.getDays(); // Days enum includes DUSHANBA, SESHANBA, CHORSHANBA, PAYSHANBA, JUMA, SHANBA, YAKSHANBA
 
-        // Initialize variables
-        Map<Long, LocalDate> daysMap = new HashMap<>();
-        long dynamicId = 1L;
+        Map<Long, LocalDate> daysMap = lessonFinanceHelper.getDatesByWeekName(days, from, til);
 
-        // Populate daysMap
-        LocalDate date = from;
-        while (!date.isAfter(til)) {
-            Days currentDay = convertDayOfWeekToDays(date.getDayOfWeek());
-            if (days.contains(currentDay)) {
-                daysMap.put(dynamicId, date); // Use dynamicId as key
-                dynamicId++; // Increment dynamicId for the next entry
-            }
-            date = date.plusDays(1);
-        }
-
-        // Fetch the students and convert to StudentDTO list
         List<Student> students = studentRepository.findAllByGroupIdAndGroup_IsGroup(groupId, true);
         List<StudentDTO> studentDTOs = students.stream().map(student -> {
             List<AttendanceDtoList> attendanceDtoLists = new ArrayList<>();
@@ -98,14 +86,12 @@ public class AttendanceServiceImpl implements AttendanceService {
                     .build();
         }).collect(Collectors.toList());
 
-        // Create and return the DTO
         return AttendanceGetDTO.builder()
                 .days(daysMap)
                 .studentDTO(studentDTOs)
                 .build();
     }
 
-    // Helper method to get dynamic ID based on date
     private Long getDynamicId(LocalDate date, Map<Long, LocalDate> daysMap) {
         for (Map.Entry<Long, LocalDate> entry : daysMap.entrySet()) {
             if (entry.getValue().isEqual(date)) {
@@ -115,19 +101,5 @@ public class AttendanceServiceImpl implements AttendanceService {
         return null; // Handle the case where date is not found in daysMap
     }
 
-    // Helper method to convert Java DayOfWeek to Days enum
-    private Days convertDayOfWeekToDays(DayOfWeek dayOfWeek) {
-        return switch (dayOfWeek) {
-            case MONDAY -> Days.MONDAY;
-            case TUESDAY -> Days.TUESDAY;
-            case WEDNESDAY -> Days.WEDNESDAY;
-            case THURSDAY -> Days.THURSDAY;
-            case FRIDAY -> Days.FRIDAY;
-            case SATURDAY -> Days.SATURDAY;
-            case SUNDAY -> Days.SUNDAY;
-            default -> throw new IllegalArgumentException("Unexpected value: " + dayOfWeek);
-        };
-
-    }
 
 }

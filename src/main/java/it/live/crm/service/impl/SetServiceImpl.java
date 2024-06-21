@@ -75,6 +75,7 @@ public class SetServiceImpl implements SetService {
 
         student.setExpectations(null);
         student.setIsStudent(false);
+        student.setBalance(0D);
 
         student.getGroup().add(group);
 
@@ -82,7 +83,7 @@ public class SetServiceImpl implements SetService {
 
         // Return success response
         return ResponseEntity.ok(ApiResponse.builder()
-                .message("Student added to group successfully")
+                .message("Student added to set successfully")
                 .status(200)
                 .build());
     }

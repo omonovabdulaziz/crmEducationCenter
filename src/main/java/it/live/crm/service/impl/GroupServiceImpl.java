@@ -38,6 +38,7 @@ public class GroupServiceImpl implements GroupService {
         groupRepository.save(group);
         for (Student student : studentRepository.findAllByGroupIdAndGroup_IsGroup(group.getId(), true)) {
             student.setIsStudent(true);
+            student.setBalance(0D);
             jdbcConnector.insertToStudentGroup(group.getId(), student.getId(), false);
             studentRepository.save(student);
         }

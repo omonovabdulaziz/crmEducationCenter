@@ -19,18 +19,13 @@ public class StudentController {
     }
 
     @PutMapping("/activeStudent")
-    public ResponseEntity<ApiResponse> activeStudent(@RequestParam Long studentId, @RequestParam Long groupId) {
-        return studentService.activeStudent(studentId, groupId);
+    public ResponseEntity<ApiResponse> activeStudent(@RequestParam Long studentId, @RequestParam Long groupId , @RequestParam Boolean activate) {
+        return studentService.activeStudent(studentId, groupId , activate);
     }
 
     @DeleteMapping("/delete")
     public ResponseEntity<ApiResponse> deleteStudent(@RequestParam Long studentId) {
         return studentService.deleteStudent(studentId);
-    }
-
-    @PutMapping("/changeGroup")
-    public ResponseEntity<ApiResponse> changeGroup(@RequestParam Long studentId, @RequestParam Long groupId) {
-        return studentService.changeGroup(studentId, groupId);
     }
 
     @PostMapping("/addStudentToGroup")

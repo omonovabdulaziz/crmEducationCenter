@@ -29,6 +29,7 @@ public class StudentMapper {
 
     public Student toEntity(StudentCreateDTO studentCreateDTO) {
         return Student.builder()
+                .balance(0D)
                 .phoneNumber(studentCreateDTO.getPhoneNumber())
                 .isStudent(studentCreateDTO.getGroupId() != null)
                 .group(studentCreateDTO.getGroupId() != null ? List.of(groupRepository.findById(studentCreateDTO.getGroupId()).orElseThrow(() -> new NotFoundException("not found group"))) : null)

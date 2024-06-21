@@ -1,11 +1,9 @@
 package it.live.crm.entity;
 
 import it.live.crm.entity.tmp.AbsLong;
-import jakarta.persistence.Entity;
-import jakarta.persistence.ManyToMany;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.context.annotation.Lazy;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -20,7 +18,7 @@ import java.util.List;
 public class Student extends AbsLong {
     private String fullName;
     private String phoneNumber;
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     private List<Group> group;
     private Boolean isStudent;
     @ManyToOne
@@ -32,5 +30,5 @@ public class Student extends AbsLong {
     private String telegramLink;
     private String passportId;
     private Boolean isDeleted;
-
+    private Double balance;
 }
