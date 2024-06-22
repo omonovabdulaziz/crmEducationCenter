@@ -13,7 +13,7 @@ public class FinanceController {
     private final FinanceService financeService;
 
     @PostMapping("/addSumToStudentBalance")
-    public ResponseEntity<ApiResponse> addSumToStudent(@RequestParam Long studentId, @RequestParam Float countSum) {
+    public ResponseEntity<ApiResponse> addSumToStudent(@RequestParam Long studentId, @RequestParam Double countSum) {
        return financeService.addSumToStudent(studentId, countSum);
     }
 

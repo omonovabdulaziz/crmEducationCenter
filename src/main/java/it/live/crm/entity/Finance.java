@@ -15,7 +15,7 @@ import java.time.YearMonth;
 @Entity
 public class Finance extends AbsUUID {
     private String type;
-    private Float summa;
+    private Double summa;
     @ManyToOne
     private Group group;
     private YearMonth month;

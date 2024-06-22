@@ -1,12 +1,8 @@
 package it.live.crm.entity;
 
-
 import it.live.crm.entity.tmp.AbsUUID;
-import jakarta.persistence.Entity;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.*;
 import lombok.*;
-
-import java.time.LocalDate;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
@@ -14,11 +10,15 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @Builder
 @Entity
-public class TeacherAttendance extends AbsUUID {
+@Table(
+        uniqueConstraints = {@UniqueConstraint(columnNames = {"teacher_id", "student_id", "group_id"})}
+)
+public class TeacherFinance extends AbsUUID {
     @ManyToOne
     private User teacher;
     @ManyToOne
+    private Student student;
+    @ManyToOne
     private Group group;
-    private LocalDate date;
-    private Double moneyCountForDate;
+    private Double commonSum;
 }

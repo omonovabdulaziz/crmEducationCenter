@@ -19,7 +19,7 @@ public class FinanceServiceImpl implements FinanceService {
     private final StudentRepository studentRepository;
 
     @Override
-    public ResponseEntity<ApiResponse> addSumToStudent(Long studentId, Float countSum) {
+    public ResponseEntity<ApiResponse> addSumToStudent(Long studentId, Double countSum) {
         Student student = studentRepository.findById(studentId).orElseThrow(() -> new NotFoundException("Student not found"));
         student.setBalance(student.getBalance() == null ? countSum : student.getBalance() + countSum);
         studentRepository.save(student);

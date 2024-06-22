@@ -5,5 +5,5 @@ import org.springframework.http.ResponseEntity;
 
 public interface FinanceService {
 
-    ResponseEntity<ApiResponse> addSumToStudent(Long studentId, Float countSum);
+    ResponseEntity<ApiResponse> addSumToStudent(Long studentId, Double countSum);
 }

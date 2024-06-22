@@ -29,8 +29,6 @@ public class DataLoaderConfig implements CommandLineRunner {
     private final JdbcTemplate jdbcTemplate;
     private final StudentRepository studentRepository;
     private final GroupRepository groupRepository;
-    private final AttendanceRepository attendanceRepository;
-    private final ChangeOrDenyLessonRepository changeOrDenyLessonRepository;
     @Value("${spring.sql.init.mode}")
     private String sqlInitMode;
     private final RoleRepository roleRepository;
@@ -50,10 +48,8 @@ public class DataLoaderConfig implements CommandLineRunner {
             userRepository.save(User.builder().name("Abdulaziz").surname("Omonov").isDeleted(false).phoneNumber("+998950960156").password(passwordEncoder.encode("omonov2006")).roleName(Collections.singletonList(cashier)).build());
             Course foundation = courseRepository.save(new Course("foundation", 6, 390000d));
             whereLinkRepository.save(new WhereLink("Telegram", "telegram"));
-            Group group = groupRepository.save(Group.builder().isGroup(true).days(Arrays.asList(Days.MONDAY, Days.TUESDAY)).course(foundation).name("NOName").startDate(LocalDate.now()).startTime(LocalTime.now()).teacher(teacherbek).build());
-            Student studentName = studentRepository.save(Student.builder().isStudent(true).group(List.of(group)).phoneNumber("+99895096343").fullName("Namov Name").balance(0D).build());
-            attendanceRepository.save(Attendance.builder().attendanceDate(LocalDate.now()).isCome(true).student(studentName).build());
-            changeOrDenyLessonRepository.save(ChangeOrDenyLesson.builder().realDate(LocalDate.now()).passedDate(LocalDate.of(2024, Month.JUNE, 12)).isCancelled(false).group(group).build());
+            Group group = groupRepository.save(Group.builder().isGroup(true).days(Arrays.asList(Days.MONDAY, Days.TUESDAY)).course(foundation).isFinished(false).name("NOName").startDate(LocalDate.now()).startTime(LocalTime.now()).teacher(teacherbek).build());
+            studentRepository.save(Student.builder().isStudent(true).group(List.of(group)).phoneNumber("+99895096343").fullName("Namov Name").isDeleted(false).balance(0D).build());
             jdbcTemplate.execute("ALTER TABLE student_group add column joined_date DATE");
             jdbcTemplate.execute("ALTER TABLE student_group add column is_active_here BOOLEAN");
         }

@@ -20,35 +20,26 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class LessonFinanceHelper {
 
-    public Double initializeLessonPriceForPerDay(Group group, LocalDate from, LocalDate til) {
-        Map<Long, LocalDate> dates = getDatesByWeekName(group.getDays(), from, til);
-        int counter = 0;
-        for (LocalDate value : dates.values()) {
-            counter += 1;
-        }
-
-        Double price = group.getCourse().getPrice();
-        return price / counter;
-    }
-
-    public Double initializeAllLessonPrice(Group group) {
-        LocalDate today = LocalDate.now();
-        YearMonth currentYearMonth = YearMonth.from(today);
+    public Double initializePerDayPrice(Group group) {
+        YearMonth currentYearMonth = YearMonth.now();
+        LocalDate firstDayOfMonth = currentYearMonth.atDay(1);
         LocalDate lastDayOfMonth = currentYearMonth.atEndOfMonth();
-        List<LocalDate> dates = today.datesUntil(lastDayOfMonth.plusDays(1)).toList();
+        List<LocalDate> dates = firstDayOfMonth.datesUntil(lastDayOfMonth.plusDays(1)).toList();
         DateTimeFormatter dayNameFormatter = DateTimeFormatter.ofPattern("EEEE");
 
         int counter = 0;
         for (LocalDate date : dates) {
             String dayName = date.format(dayNameFormatter);
             for (Days day : group.getDays()) {
-                if (dayName.equals(String.valueOf(day))) {
+                if (dayName.equalsIgnoreCase(day.name())) {
                     counter += 1;
                 }
             }
         }
+
         Double price = group.getCourse().getPrice();
-        return price / counter;
+        System.out.println(price / counter);
+        return counter > 0 ? price / counter : 0.0;
     }
 
 
