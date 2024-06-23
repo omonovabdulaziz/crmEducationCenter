@@ -21,4 +21,5 @@ public class TeacherFinance extends AbsUUID {
     @ManyToOne
     private Group group;
     private Double commonSum;
+    private Integer passedLessonCount;
 }

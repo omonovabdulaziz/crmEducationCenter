@@ -16,6 +16,6 @@ public class StudentDTO {
     private String fullName;
     private String phoneNumber;
     private Boolean isStudent;
-    private Boolean isPaidThisMonth;
+    private Boolean hasOwe;
     private List<AttendanceDtoList> attendance;
 }

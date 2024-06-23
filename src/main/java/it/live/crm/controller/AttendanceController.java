@@ -5,6 +5,7 @@ import it.live.crm.payload.ApiResponse;
 import it.live.crm.payload.AttendanceCreateDTO;
 import it.live.crm.payload.AttendanceGetDTO;
 import it.live.crm.service.AttendanceService;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.ResponseEntity;
@@ -20,6 +21,7 @@ public class AttendanceController {
     private final AttendanceService attendanceService;
 
     @PostMapping("/createAttendance")
+    @Transactional
     public ResponseEntity<ApiResponse> createAttendance(@RequestBody AttendanceCreateDTO attendance) {
         return attendanceService.create(attendance);
     }

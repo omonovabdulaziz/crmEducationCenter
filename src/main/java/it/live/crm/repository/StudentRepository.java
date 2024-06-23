@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface StudentRepository extends JpaRepository<Student, Long> {
     @Query("SELECT COUNT(s) FROM Student s WHERE s.expectations.id = :expectationsId")
@@ -26,4 +27,5 @@ public interface StudentRepository extends JpaRepository<Student, Long> {
 
     @Query(nativeQuery = true, value = "SELECT exists(SELECT 1 FROM student_group WHERE student_id=:studentId and group_id=:groupId and is_active_here=true)")
     Boolean checkGroupIdAndStudentId(@Param("groupId") Long groupId, @Param("studentId") Long studentId);
+    Optional<Student> findByIdAndGroupId(Long id, Long groupId);
 }

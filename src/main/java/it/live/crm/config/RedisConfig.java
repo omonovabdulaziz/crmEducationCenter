@@ -32,7 +32,6 @@ public class RedisConfig {
     public CacheManager cacheManager() {
         RedisCacheConfiguration redisCacheConfiguration = RedisCacheConfiguration.defaultCacheConfig()
                 .entryTtl(Duration.ofMinutes(1));
-
         return RedisCacheManager.builder(jedisConnectionFactory())
                 .cacheDefaults(redisCacheConfiguration)
                 .build();

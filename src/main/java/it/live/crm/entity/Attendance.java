@@ -20,4 +20,6 @@ public class Attendance extends AbsUUID {
     private Student student;
     private LocalDate attendanceDate;
     private Boolean isCome;
+    @ManyToOne
+    private Group group;
 }
