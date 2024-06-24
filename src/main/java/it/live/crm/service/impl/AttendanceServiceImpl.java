@@ -97,8 +97,6 @@ public class AttendanceServiceImpl implements AttendanceService {
             teacherFinanceRepository.save(teacherFinance);
         }
     }
-
-
     @Override
     public ResponseEntity<ApiResponse> delete(UUID attId) {
         Attendance attendance = attendanceRepository.findById(attId).orElseThrow(() -> new NotFoundException("Not found attendance"));

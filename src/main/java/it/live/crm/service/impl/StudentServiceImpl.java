@@ -3,6 +3,7 @@ package it.live.crm.service.impl;
 import it.live.crm.entity.Group;
 import it.live.crm.entity.Student;
 import it.live.crm.entity.StudentArchiveGroup;
+import it.live.crm.entity.enums.Days;
 import it.live.crm.exception.NotFoundException;
 import it.live.crm.mapper.StudentMapper;
 import it.live.crm.payload.ApiResponse;
@@ -11,6 +12,7 @@ import it.live.crm.repository.GroupRepository;
 import it.live.crm.repository.StudentArchivedGroupRepository;
 import it.live.crm.repository.StudentRepository;
 import it.live.crm.service.StudentService;
+import it.live.crm.service.helper.LessonFinanceHelper;
 import it.live.crm.util.JdbcConnector;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cglib.core.Local;
@@ -18,6 +20,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.YearMonth;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 @Service
@@ -28,6 +34,8 @@ public class StudentServiceImpl implements StudentService {
     private final StudentArchivedGroupRepository studentArchivedGroupRepository;
     private final JdbcConnector jdbcConnector;
     private final GroupRepository groupRepository;
+    private final LessonFinanceHelper lessonFinanceHelper;
+
 
     @Override
     public ResponseEntity<ApiResponse> createStudent(StudentCreateDTO studentCreateDTO) {
@@ -37,8 +45,24 @@ public class StudentServiceImpl implements StudentService {
 
     @Override
     public ResponseEntity<ApiResponse> activeStudent(Long studentId, Long groupId, Boolean activate) {
+        if (activate) {
+            LocalDate currentDate = LocalDate.now();
+            YearMonth currentYearMonth = YearMonth.from(currentDate);
+            LocalDate atEndOfMonth = currentYearMonth.atEndOfMonth();
+            LocalDate startOfThisMonth = currentDate.withDayOfMonth(1);
+            Group group = groupRepository.findById(groupId).orElseThrow(() -> new NotFoundException("Not found group"));
+            List<Days> daysList = group.getDays();
+            Map<Long, LocalDate> remainDates = lessonFinanceHelper.getDatesByWeekName(daysList, currentDate, atEndOfMonth);
+            Map<Long, LocalDate> allDates = lessonFinanceHelper.getDatesByWeekName(daysList, startOfThisMonth, atEndOfMonth);
+            int remainDateSize = remainDates.size();
+            int allDateSize = allDates.size();
+            double eliminateSum = group.getCourse().getPrice() * remainDateSize / allDateSize;
+            Student student = studentRepository.findByIdAndGroupId(studentId, groupId).orElseThrow(() -> new NotFoundException("Not found student with this group"));
+            student.setBalance(student.getBalance() - eliminateSum);
+            studentRepository.save(student);
+        }
         jdbcConnector.updateToStudentGroup(groupId, studentId, activate);
-        return ResponseEntity.ok(ApiResponse.builder().status(200).message(activate ? "student avtivated for this group" : "student Deactivated for this group").build());
+        return ResponseEntity.ok(ApiResponse.builder().status(200).message(activate ? "student activated and balance reduced for this group" : "student Deactivated for this group").build());
     }
 
     @Override
@@ -76,6 +100,15 @@ public class StudentServiceImpl implements StudentService {
             }
         }
         return ResponseEntity.ok(ApiResponse.builder().status(200).message("elemnited").build());
+    }
+
+    @Override
+    public List<Student> getAllStudentByGroupId(Long groupId, Boolean active) {
+        List<Student> students = new ArrayList<>();
+        for (Long l : jdbcConnector.getStudentsByGroupId(groupId, active)) {
+            students.add(studentRepository.findByIdAndGroupId(l, groupId).orElseThrow(() -> new NotFoundException("Student not found or group mismatched")));
+        }
+        return students;
     }
 
 
