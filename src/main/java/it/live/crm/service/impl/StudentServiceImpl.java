@@ -15,7 +15,6 @@ import it.live.crm.service.StudentService;
 import it.live.crm.service.helper.LessonFinanceHelper;
 import it.live.crm.util.JdbcConnector;
 import lombok.RequiredArgsConstructor;
-import org.springframework.cglib.core.Local;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 

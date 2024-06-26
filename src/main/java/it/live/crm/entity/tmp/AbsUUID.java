@@ -10,6 +10,7 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.sql.Timestamp;
+import java.time.LocalDate;
 import java.util.UUID;
 
 @Data
@@ -21,7 +22,7 @@ public abstract class AbsUUID {
     private UUID id;
     @CreationTimestamp
     @Column(updatable = false)
-    private Timestamp createdAt;
+    private LocalDate createdAt;
     @UpdateTimestamp
-    private Timestamp updatedAt;
+    private LocalDate updatedAt;
 }
