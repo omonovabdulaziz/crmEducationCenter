@@ -19,10 +19,20 @@ services:
       - "8084:8084"
     depends_on:
       - postgres
+      - redis
     environment:
       SPRING_DATASOURCE_URL: jdbc:postgresql://itservice-db:5432/itservice
       SPRING_DATASOURCE_USERNAME: postgres
       SPRING_DATASOURCE_PASSWORD: omonov2006
+      SPRING_REDIS_HOST: redis
+      SPRING_REDIS_PORT: 6379
+  redis:
+    container_name: redis
+    image: "redis:latest"
+    restart: always
+    ports:
+      - "6379:6379"
+
 
 volumes:
   postgres-data:

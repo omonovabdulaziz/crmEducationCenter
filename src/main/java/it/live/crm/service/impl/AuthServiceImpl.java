@@ -27,7 +27,7 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public ResponseEntity<ApiResponse> login(LoginDTO loginDTO) {
-        User user = userRepository.findByPhoneNumber(loginDTO.getPhoneNumber()).orElseThrow(() -> new NotFoundException("User not found"));
+        User user = userRepository.findByPhoneNumber(loginDTO.getPhoneNumber()).orElseThrow(() -> new ForbiddenException("User not found"));
         if (!passwordEncoder.matches(loginDTO.getPassword(), user.getPassword()))
             throw new ForbiddenException("Wrong password");
         String jwt = jwtProvider.generateToken(user);
