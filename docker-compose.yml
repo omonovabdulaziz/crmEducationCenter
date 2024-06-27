@@ -1,15 +1,28 @@
-version: '3'
+version: '3.8'
 services:
+  redis:
+    container_name: rediscontainer
+    image: redis
+    ports:
+      - "6357:6357"
+    command: redis-server --port 6357
+    networks:
+      my-network:
+
   postgres:
     container_name: itservice-db
     image: "postgres:15"
     restart: always
     ports:
-      - "5435:5435"
+      - "5430:5430"
     environment:
       POSTGRES_DB: itservice
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: omonov2006
+    networks:
+      my-network:
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
   crm-app:
     build:
       context: .
@@ -24,15 +37,17 @@ services:
       SPRING_DATASOURCE_URL: jdbc:postgresql://itservice-db:5432/itservice
       SPRING_DATASOURCE_USERNAME: postgres
       SPRING_DATASOURCE_PASSWORD: omonov2006
-      SPRING_REDIS_HOST: redis
-      SPRING_REDIS_PORT: 6379
-  redis:
-    container_name: redis
-    image: "redis:latest"
-    restart: always
-    ports:
-      - "6365:6365"
+      SPRING_REDIS_HOST: rediscontainer
+      SPRING_REDIS_PORT: 6357
+    networks:
+      my-network:
 
+
+networks:
+  my-network:
+    driver: bridge
 
 volumes:
   postgres-data:
+
+
