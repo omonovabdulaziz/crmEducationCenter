@@ -9,13 +9,14 @@ import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.TemporalAdjusters;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
-public class LessonFinanceHelper {
+public class HelperFunctions {
 
     public Double initializePerDayPrice(Group group) {
         YearMonth currentYearMonth = YearMonth.now();
@@ -68,6 +69,10 @@ public class LessonFinanceHelper {
             default -> throw new IllegalArgumentException("Unexpected value: " + dayOfWeek);
         };
 
+    }
+
+    public LocalDate identificationByDuring(LocalDate startDate, Integer monthCount) {
+        return startDate.plusDays(monthCount).with(TemporalAdjusters.lastDayOfMonth());
     }
 
 }

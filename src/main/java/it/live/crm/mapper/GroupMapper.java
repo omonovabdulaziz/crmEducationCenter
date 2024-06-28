@@ -5,7 +5,9 @@ import it.live.crm.entity.RoleName;
 import it.live.crm.entity.enums.Days;
 import it.live.crm.exception.NotFoundException;
 import it.live.crm.payload.SetCreateDTO;
+import it.live.crm.payload.UpdateGroupDTO;
 import it.live.crm.repository.CourseRepository;
+import it.live.crm.repository.RoleRepository;
 import it.live.crm.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -20,6 +22,7 @@ import java.util.Objects;
 public class GroupMapper {
     private final CourseRepository courseRepository;
     private final UserRepository userRepository;
+    private final RoleRepository roleRepository;
 
     public Group toEntity(SetCreateDTO setDTO) {
         List<Days> days = new ArrayList<>();
@@ -43,5 +46,20 @@ public class GroupMapper {
                 .startTime(setDTO.getStartTime())
                 .startDate(null)
                 .build();
+    }
+
+    public Group toUpdate(Group group, UpdateGroupDTO updateGroupDTO) {
+        if (updateGroupDTO.getEndDate() != null)
+            group.setEndDate(updateGroupDTO.getEndDate());
+        group.setName(updateGroupDTO.getGroupName());
+        group.setStartTime(updateGroupDTO.getStartTime());
+        group.setDays(updateGroupDTO.getDaysList());
+        if (!Objects.equals(updateGroupDTO.getCourseId(), group.getCourse().getId())) {
+            group.setCourse(courseRepository.findById(updateGroupDTO.getCourseId()).orElseThrow(() -> new NotFoundException("Error not found")));
+        }
+        if (!Objects.equals(updateGroupDTO.getTeacherId(), group.getTeacher().getId())) {
+            group.setTeacher(userRepository.findByIdAndRoleName(updateGroupDTO.getTeacherId(), List.of(roleRepository.findByName("TEACHER").orElseThrow(() -> new NotFoundException("Not found role")))).orElseThrow(() -> new NotFoundException("Error not found")));
+        }
+        return group;
     }
 }

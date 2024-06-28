@@ -8,7 +8,7 @@ import it.live.crm.exception.NotFoundException;
 import it.live.crm.payload.*;
 import it.live.crm.repository.*;
 import it.live.crm.service.AttendanceService;
-import it.live.crm.service.helper.LessonFinanceHelper;
+import it.live.crm.service.helper.HelperFunctions;
 import it.live.crm.service.helper.RedisHelper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -25,7 +25,7 @@ public class AttendanceServiceImpl implements AttendanceService {
     private final AttendanceRepository attendanceRepository;
     private final StudentRepository studentRepository;
     private final GroupRepository groupRepository;
-    private final LessonFinanceHelper lessonFinanceHelper;
+    private final HelperFunctions helperFunctions;
     private final RedisHelper redisHelper;
     private final TeacherPercentageRepository teacherPercentageRepository;
     private final TeacherFinanceRepository teacherFinanceRepository;
@@ -67,7 +67,7 @@ public class AttendanceServiceImpl implements AttendanceService {
             }
         } else {
             if (exactPrice == null) {
-                Double priceForOneDay = lessonFinanceHelper.initializePerDayPrice(group);
+                Double priceForOneDay = helperFunctions.initializePerDayPrice(group);
                 Double percentage = teacherPercentage.getCount() / 100.0;
                 Double realPrice = priceForOneDay * percentage;
                 common(group, student, realPrice, teacher, optional);
@@ -116,7 +116,7 @@ public class AttendanceServiceImpl implements AttendanceService {
             System.out.println(exactPriceObject);
             Double exactPrice = exactPriceObject != null ? Double.parseDouble(exactPriceObject.toString()) : null;
             if (exactPrice == null) {
-                Double priceForOneDay = lessonFinanceHelper.initializePerDayPrice(group);
+                Double priceForOneDay = helperFunctions.initializePerDayPrice(group);
                 Double percentage = teacherPercentage.getCount() / 100.0;
                 Double realPrice = priceForOneDay * percentage;
                 teacherFinance.setCommonSum(teacherFinance.getCommonSum() - realPrice);
@@ -140,7 +140,7 @@ public class AttendanceServiceImpl implements AttendanceService {
         Group group = groupRepository.findByIdAndIsGroup(groupId, true).orElseThrow(() -> new NotFoundException("group not found or it is not group"));
         List<Days> days = group.getDays(); // Days enum includes DUSHANBA, SESHANBA, CHORSHANBA, PAYSHANBA, JUMA, SHANBA, YAKSHANBA
 
-        Map<Long, LocalDate> daysMap = lessonFinanceHelper.getDatesByWeekName(days, from, til);
+        Map<Long, LocalDate> daysMap = helperFunctions.getDatesByWeekName(days, from, til);
 
         List<Student> students = studentRepository.findAllByGroupIdAndGroup_IsGroup(groupId, true);
         List<StudentDTO> studentDTOs = students.stream().map(student -> {

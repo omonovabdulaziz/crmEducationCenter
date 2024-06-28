@@ -2,7 +2,6 @@ package it.live.crm.service.impl;
 
 import it.live.crm.entity.User;
 import it.live.crm.exception.ForbiddenException;
-import it.live.crm.exception.NotFoundException;
 import it.live.crm.jwt.JwtProvider;
 import it.live.crm.payload.ApiResponse;
 import it.live.crm.payload.LoginDTO;
@@ -27,9 +26,9 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public ResponseEntity<ApiResponse> login(LoginDTO loginDTO) {
-        User user = userRepository.findByPhoneNumber(loginDTO.getPhoneNumber()).orElseThrow(() -> new ForbiddenException("User not found"));
+        User user = userRepository.findByPhoneNumber(loginDTO.getPhoneNumber()).orElseThrow(() -> new ForbiddenException("Login or Password wrong"));
         if (!passwordEncoder.matches(loginDTO.getPassword(), user.getPassword()))
-            throw new ForbiddenException("Wrong password");
+            throw new ForbiddenException("Login or Password wrong");
         String jwt = jwtProvider.generateToken(user);
         Map<String, Object> map = new HashMap<>();
         map.put("token", jwt);

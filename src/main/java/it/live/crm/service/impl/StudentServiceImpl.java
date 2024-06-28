@@ -12,7 +12,7 @@ import it.live.crm.repository.GroupRepository;
 import it.live.crm.repository.StudentArchivedGroupRepository;
 import it.live.crm.repository.StudentRepository;
 import it.live.crm.service.StudentService;
-import it.live.crm.service.helper.LessonFinanceHelper;
+import it.live.crm.service.helper.HelperFunctions;
 import it.live.crm.util.JdbcConnector;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -33,7 +33,7 @@ public class StudentServiceImpl implements StudentService {
     private final StudentArchivedGroupRepository studentArchivedGroupRepository;
     private final JdbcConnector jdbcConnector;
     private final GroupRepository groupRepository;
-    private final LessonFinanceHelper lessonFinanceHelper;
+    private final HelperFunctions helperFunctions;
 
 
     @Override
@@ -51,8 +51,8 @@ public class StudentServiceImpl implements StudentService {
             LocalDate startOfThisMonth = currentDate.withDayOfMonth(1);
             Group group = groupRepository.findById(groupId).orElseThrow(() -> new NotFoundException("Not found group"));
             List<Days> daysList = group.getDays();
-            Map<Long, LocalDate> remainDates = lessonFinanceHelper.getDatesByWeekName(daysList, currentDate, atEndOfMonth);
-            Map<Long, LocalDate> allDates = lessonFinanceHelper.getDatesByWeekName(daysList, startOfThisMonth, atEndOfMonth);
+            Map<Long, LocalDate> remainDates = helperFunctions.getDatesByWeekName(daysList, currentDate, atEndOfMonth);
+            Map<Long, LocalDate> allDates = helperFunctions.getDatesByWeekName(daysList, startOfThisMonth, atEndOfMonth);
             int remainDateSize = remainDates.size();
             int allDateSize = allDates.size();
             double eliminateSum = group.getCourse().getPrice() * remainDateSize / allDateSize;

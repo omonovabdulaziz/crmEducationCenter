@@ -27,5 +27,6 @@ public class Group extends AbsLong {
     @Enumerated(EnumType.STRING)
     private List<Days> days;
     private LocalDate startDate;
+    private LocalDate endDate;
     private Boolean isFinished;
 }
